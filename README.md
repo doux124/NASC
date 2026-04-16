@@ -14,8 +14,8 @@ hyperparameters.
 
 ## Repo layout
 
-The repository is split into two deliverables — the Python ML pipeline
-(required) and the React dashboard (optional but recommended).
+The repository is split into two deliverables including the Python ML pipeline
+(required) and the React dashboard.
 
 ```
 naisc-2026-singtel/
@@ -116,7 +116,7 @@ python ./src/main.py \
 | `model.joblib`    | Trained LightGBM model                              |
 | stdout            | Drift report, time taken, AU-PRC scores             |
 
-### Run in Docker (reproducible)
+### Run in Docker
 
 ```bash
 # From the repo root
