@@ -1,0 +1,135 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ─ Base tweaks ──────────────────────────────────────────── */
+@layer base {
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
+
+  body {
+    font-family: theme('fontFamily.body');
+    font-feature-settings: 'ss01', 'cv11';
+    background:
+      radial-gradient(1200px 600px at 85% -10%, rgba(228, 0, 106, 0.08), transparent 60%),
+      radial-gradient(900px 500px at -10% 110%, rgba(0, 212, 168, 0.06), transparent 60%),
+      theme('colors.surface.0');
+  }
+
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    background: theme('colors.surface.1');
+  }
+  ::-webkit-scrollbar-thumb {
+    background: theme('colors.border.strong');
+    border-radius: 4px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: theme('colors.brand.accent');
+  }
+}
+
+/* ─ Reusable component classes ───────────────────────────── */
+@layer components {
+  .card {
+    @apply relative rounded-md border border-border-subtle bg-surface-1/90 p-5 shadow-card backdrop-blur-sm;
+  }
+
+  .card-title {
+    @apply mb-4 flex items-center gap-2.5 font-mono text-xs uppercase tracking-widest2 text-ink-muted;
+  }
+
+  .card-title-dot {
+    @apply h-1.5 w-1.5 rounded-full bg-brand-accent shadow-[0_0_8px_theme(colors.brand.accent)];
+  }
+
+  .metric-card {
+    @apply relative overflow-hidden rounded-md border border-border-subtle bg-surface-1/90 p-4 shadow-card
+           transition-colors hover:border-border-strong;
+  }
+
+  .metric-card::before {
+    content: '';
+    @apply pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-current to-transparent opacity-40;
+  }
+
+  .tab-btn {
+    @apply inline-flex items-center gap-2 rounded-sm border-b-2 border-transparent px-4 py-3
+           font-mono text-xs uppercase tracking-widest2 text-ink-faint transition-colors
+           hover:text-ink;
+  }
+
+  .tab-btn.active {
+    @apply border-brand-accent text-ink;
+  }
+
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-sm border border-border-strong bg-surface-2
+           px-3.5 py-2 font-mono text-xs uppercase tracking-widest2 text-ink
+           transition-all hover:border-brand-accent hover:bg-surface-3 active:scale-[0.98];
+  }
+
+  .btn-accent {
+    @apply border-brand-accent/60 bg-brand-accent/10 text-brand-accent2 hover:bg-brand-accent/20;
+  }
+
+  .input-field {
+    @apply w-full rounded-sm border border-border-strong bg-surface-0 px-3 py-2 font-mono text-sm
+           text-ink outline-none transition-colors
+           placeholder:text-ink-faint focus:border-brand-accent focus:ring-1 focus:ring-brand-accent/40;
+  }
+
+  .chip {
+    @apply inline-flex items-center gap-1 rounded-sm border px-2 py-0.5 font-mono text-2xs uppercase tracking-widest2;
+  }
+
+  .chip-high {
+    @apply border-brand-accent/50 bg-brand-accent/10 text-brand-accent2;
+  }
+
+  .chip-low {
+    @apply border-ink-faint/40 bg-ink-faint/10 text-ink-muted;
+  }
+
+  .tag-scale {
+    @apply border-brand-purple/50 bg-brand-purple/10 text-brand-purple;
+  }
+  .tag-drop {
+    @apply border-brand-accent/50 bg-brand-accent/10 text-brand-accent2;
+  }
+  .tag-seasonal {
+    @apply border-brand-teal/50 bg-brand-teal/10 text-brand-teal;
+  }
+  .tag-none {
+    @apply border-ink-faint/40 bg-ink-faint/10 text-ink-muted;
+  }
+
+  .grid-bg {
+    @apply bg-grid-faint bg-grid-24;
+  }
+}
+
+/* ─ Recharts overrides ───────────────────────────────────── */
+.recharts-default-tooltip {
+  background: theme('colors.surface.1') !important;
+  border: 1px solid theme('colors.border.strong') !important;
+  border-radius: 3px !important;
+  font-family: theme('fontFamily.mono') !important;
+}
+.recharts-cartesian-axis-tick text {
+  fill: theme('colors.ink.faint');
+}
+
+/* ─ Stagger helpers ──────────────────────────────────────── */
+.delay-1 { animation-delay: 40ms; }
+.delay-2 { animation-delay: 100ms; }
+.delay-3 { animation-delay: 160ms; }
+.delay-4 { animation-delay: 220ms; }
+.delay-5 { animation-delay: 280ms; }

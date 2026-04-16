@@ -1,0 +1,49 @@
+# syntax=docker/dockerfile:1.7
+#
+# Reproduces the NAISC 2026 Singtel Adaptive Drift Intelligence pipeline.
+# Build context should be the repo root (where src/ and requirements.txt live).
+#
+# Build:
+#   docker build -f docker/Dockerfile.pipeline -t naisc-pipeline .
+#
+# Run (mount input data and output dir):
+#   docker run --rm \
+#     -v "$(pwd)/data:/data:ro" \
+#     -v "$(pwd)/outputs:/outputs" \
+#     naisc-pipeline \
+#     --train_data_filepath /data/train.csv \
+#     --test_data_filepath  /data/test.csv
+
+FROM python:3.12-slim AS base
+
+# Avoid interactive prompts, keep Python output unbuffered
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PIP_NO_CACHE_DIR=1 \
+    PIP_DISABLE_PIP_VERSION_CHECK=1
+
+# LightGBM needs libgomp1 at runtime
+RUN apt-get update \
+ && apt-get install -y --no-install-recommends libgomp1 \
+ && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+
+# Install Python deps first for layer caching
+COPY requirements.txt .
+RUN pip install --upgrade pip && pip install -r requirements.txt
+
+# Copy pipeline source
+COPY src/ ./src/
+
+# Non-root user for safety
+RUN useradd -m -u 1000 runner \
+ && mkdir -p /outputs \
+ && chown -R runner:runner /app /outputs
+USER runner
+
+# Write outputs here by default
+WORKDIR /outputs
+
+ENTRYPOINT ["python", "/app/src/main.py"]
+CMD ["--help"]

@@ -1,0 +1,45 @@
+# NAISC 2026 · Adaptive Drift Intelligence
+#
+# Services:
+#   pipeline  — runs the LightGBM drift-aware churn pipeline (Python 3.12)
+#   dashboard — serves the production Vite build via Nginx on :8080
+#
+# Typical workflow:
+#   1. docker compose run --rm pipeline \
+#        --train_data_filepath /data/train.csv \
+#        --test_data_filepath  /data/test.csv
+#      → writes predictions.csv + model.joblib into ./outputs
+#
+#   2. docker compose up -d dashboard
+#      → open http://localhost:8080, upload ./outputs/predictions.csv
+#
+#   3. docker compose down
+
+services:
+  pipeline:
+    build:
+      context: ..
+      dockerfile: naisc-drift-dashboard/docker/Dockerfile.pipeline
+    image: naisc-pipeline:latest
+    container_name: naisc-pipeline
+    volumes:
+      - ../data:/data:ro
+      - ../outputs:/outputs
+    profiles:
+      - ml         # only starts when explicitly invoked
+
+  dashboard:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: naisc-dashboard:latest
+    container_name: naisc-dashboard
+    ports:
+      - "8080:80"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
